@@ -9,7 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.3.15",
     "uid2": "0.0.3",
     "ws": "^6.1.2"
   }
