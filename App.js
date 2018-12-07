@@ -25,7 +25,7 @@ const UserModel = mongoose.model("User", {
   name: String,
   messages: [
     {
-      _id: String,
+      _idReceiver: String,
       createdAt: { type: Date, default: Date.now },
       text: String,
       user: {
@@ -61,15 +61,33 @@ wss.on("connection", function connection(ws, req) {
       console.log("dataJSON", dataJSON);
       // Save message for senderId and receiverId here
       UserModel.findOne({ _id: dataJSON._id }).exec(function(err, res) {
+        // UserModel.findOne({ _id: dataJSON.user._id })
         if (err) {
           return res.json({ error: err.message });
         } else {
-          console.log("user", res);
-          console.log(res.messages);
-          console.log("ESPECE D'ABRUTI", dataJSON);
+          // console.log("user", res);
+          // console.log(res.messages);
+          // console.log("message pushé", dataJSON);
           res.messages.push(dataJSON);
           res.save(function(err, savedMessage) {
-            console.log("message sauvegardé", savedMessage);
+            // console.log("message sauvegardé", savedMessage);
+          });
+        }
+      });
+      UserModel.findOne({ _id: dataJSON.user._id }).exec(function(
+        err,
+        userFound
+      ) {
+        // UserModel.findOne({ _id: dataJSON.user._id })
+        if (err) {
+          return res.json({ error: err.message });
+        } else {
+          // console.log("user", res);
+          // console.log(res.messages);
+          // console.log("message pushé", dataJSON);
+          userFound.messages.push(dataJSON);
+          userFound.save(function(err, savedMessage) {
+            // console.log("message sauvegardé", savedMessage);
           });
         }
       });
