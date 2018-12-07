@@ -25,7 +25,6 @@ const UserModel = mongoose.model("User", {
   name: String,
   messages: [
     {
-
       _idReceiver: String,
 
       createdAt: { type: Date, default: Date.now },
@@ -49,19 +48,8 @@ app.post("/sign_up", function(req, res) {
       res.json(createdUser);
     }
   });
-
 });
 
-app.post("/sign_up", function(req, res) {
-  const newUser = new UserModel(req.body);
-  newUser.save(function(err, createdUser) {
-    if (err) {
-      res.json({ error: err.message });
-    } else {
-      res.json(createdUser);
-    }
-  });
-});
 app.get("/historyMessages", function(req, res) {
   UserModel.findOne({ _id: "5c0a54c7295c351171deae9f" }).exec(function(
     err,
@@ -76,7 +64,6 @@ const wss = new WebSocket.Server({ server });
 wss.on("connection", function connection(ws, req) {
   console.log("incoming connexion");
   ws.on("message", function incoming(message) {
-
     // console.log("incoming message");
     try {
       const dataJSON = JSON.parse(message);
@@ -110,7 +97,6 @@ wss.on("connection", function connection(ws, req) {
           userFound.messages.push(dataJSON);
           userFound.save(function(err, savedMessage) {
             // console.log("message sauvegardé", savedMessage);
-
           });
         }
       });
