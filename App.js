@@ -78,10 +78,10 @@ wss.on("connection", function connection(ws, req) {
           if (dataJSON.text && dataJSON._id) {
             client.send(
               /* JSON.stringify({
-               _id: uid2(10),
-               text: dataJSON.text,
-               user: { name: dataJSON.name }
-             }) */
+                _id: uid2(10),
+                text: dataJSON.text,
+                user: { name: dataJSON.name }
+              }) */
               JSON.stringify({
                 text: dataJSON.text,
                 _id: dataJSON._id,
