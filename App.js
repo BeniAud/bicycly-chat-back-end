@@ -48,7 +48,6 @@ app.post("/sign_up", function(req, res) {
     }
   });
 });
-
 app.get("/historyMessages", function(req, res) {
   UserModel.findOne({ _id: "5c0a54c7295c351171deae9f" }).exec(function(
     err,
@@ -58,10 +57,8 @@ app.get("/historyMessages", function(req, res) {
     res.json({ list: myAccount.messages });
   });
 });
-
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
 wss.on("connection", function connection(ws, req) {
   console.log("incoming connexion");
   ws.on("message", function incoming(message) {
@@ -106,10 +103,10 @@ wss.on("connection", function connection(ws, req) {
           if (dataJSON.text && dataJSON._id) {
             client.send(
               /* JSON.stringify({
-                _id: uid2(10),
-                text: dataJSON.text,
-                user: { name: dataJSON.name }
-              }) */
+                 _id: uid2(10),
+                 text: dataJSON.text,
+                 user: { name: dataJSON.name }
+               }) */
               JSON.stringify({
                 text: dataJSON.text,
                 _id: dataJSON._id,
