@@ -1,8 +1,8 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
-const mongoose = require("mongoose");
 const uid2 = require("uid2");
+const mongoose = require("mongoose");
 const _ = require("lodash");
 mongoose.connect(
   "mongodb://localhost:27017/chat-bicycly",
@@ -21,20 +21,18 @@ app.use(bodyParser.json());
 //   res.send({ msg: "hello" });
 // });
 
-const UserModel = mongoose.model("Users", {
+const UserModel = mongoose.model("User", {
   name: String,
   messages: [
     {
       _id: String,
-      created_at: { type: Date, default: Date.now },
+      createdAt: { type: Date, default: Date.now },
       text: String,
-      senderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      },
-      receiverId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+      user: {
+        _id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User"
+        }
       }
     }
   ]
@@ -62,16 +60,13 @@ wss.on("connection", function connection(ws, req) {
       const dataJSON = JSON.parse(message);
       console.log("dataJSON", dataJSON);
       // Save message for senderId and receiverId here
-      UserModel.findOne({ _id: "5c09317d9ddfb9176a30ce11" }).exec(function(
-        err,
-        res
-      ) {
+      UserModel.findOne({ _id: dataJSON._id }).exec(function(err, res) {
         if (err) {
           return res.json({ error: err.message });
         } else {
           console.log("user", res);
           console.log(res.messages);
-          console.log("coucou", dataJSON);
+          console.log("ce qu'on push", dataJSON);
           res.messages.push(dataJSON);
           res.save(function(err, savedMessage) {
             console.log("message sauvegardé", savedMessage);
@@ -80,14 +75,23 @@ wss.on("connection", function connection(ws, req) {
       });
       wss.clients.forEach(function each(client) {
         if (client !== ws && client.readyState === WebSocket.OPEN) {
-          if (dataJSON.text && dataJSON.name) {
+          if (dataJSON.text && dataJSON._id) {
             client.send(
+              /* JSON.stringify({
+               _id: uid2(10),
+               text: dataJSON.text,
+               user: { name: dataJSON.name }
+             }) */
               JSON.stringify({
-                _id: uid2(10),
                 text: dataJSON.text,
-                user: { name: dataJSON.name }
+                _id: dataJSON._id,
+                user: {
+                  _id: dataJSON.user._id
+                }
               })
             );
+          } else {
+            console.log("fuck that shit");
           }
         }
       });
